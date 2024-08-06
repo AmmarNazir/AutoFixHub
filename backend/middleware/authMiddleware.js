@@ -1,26 +1,22 @@
-const jwt = require("jsonwebtoken");
-const authUtils = require("../utils/authUtils");
-const { secretKey } = require("../config");
+// middleware/authMiddleware.js
+const jwt = require('jsonwebtoken');
+const { secretKey } = require('../config');
 
-const authMiddleware = {
-  // Middleware to verify JWT token
-  verifyToken: (req, res, next) => {
-    const token = req.headers.authorization?.split(" ")[1]; // Assuming the token is sent as a Bearer token
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
 
-    if (!token) {
-      return res
-        .status(401)
-        .json({ message: "Access denied. No token provided." });
+  if (!token) {
+    return res.status(401).json({ message: 'No token provided' });
+  }
+
+  jwt.verify(token, secretKey, (err, user) => {
+    if (err) {
+      return res.status(403).json({ message: 'Invalid token' });
     }
-
-    try {
-      const decoded = authUtils.verifyToken(token, secretKey);
-      req.user = decoded; // Attach the decoded payload to the request object
-      next(); // Proceed to the next middleware or route handler
-    } catch (error) {
-      return res.status(400).json({ message: "Invalid token." });
-    }
-  },
+    req.user = user;
+    next();
+  });
 };
 
-module.exports = authMiddleware;
+module.exports = authenticateToken;

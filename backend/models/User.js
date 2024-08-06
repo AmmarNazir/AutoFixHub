@@ -1,5 +1,6 @@
-const mongoose = require("mongoose");
-const argon2 = require("argon2");
+// models/User.js
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -13,7 +14,6 @@ const userSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: function (v) {
-        // Simple email format validation
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
       },
       message: "Invalid email address format",
@@ -23,18 +23,32 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  // Add other fields as needed
+  profileImage: {
+    type: String,
+  },
+  orders: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Order',
+  }],
+  appointments: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Appointment',
+  }],
 });
 
-// Hash the password before saving to the database
-/*userSchema.pre("save", async function (next) {
-  const user = this;
-  if (user.isModified("password")) {
-    user.password = await argon2.hash(user.password);
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) {
+    return next();
   }
-  next();
-});*/
+  try {
+    const hashedPassword = await bcrypt.hash(this.password, 10);
+    this.password = hashedPassword;
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model('User', userSchema);
 
 module.exports = User;

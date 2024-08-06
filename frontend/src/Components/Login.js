@@ -10,12 +10,7 @@ const Login = ({ onLogin }) => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(''); // Reset error message
-
-    if (!username || !password) {
-      setError('All fields are required');
-      return;
-    }
+    setError('');
 
     try {
       const response = await fetch('http://localhost:3000/api/users/login', {
@@ -27,23 +22,15 @@ const Login = ({ onLogin }) => {
       });
 
       const data = await response.json();
-      console.log('Server response:', data); // Log the server response
 
       if (response.ok) {
-        // Store login state (e.g., token) in local storage
         localStorage.setItem('token', data.token);
-        console.log('Token stored in localStorage:', data.token); // Log the token
-
-        // Call onLogin to update the parent component's state
         onLogin();
-
-        // Redirect to home page
         navigate('/');
       } else {
         setError(data.message || 'Login failed');
       }
     } catch (error) {
-      console.error('Login error:', error); // Log the error
       setError('An error occurred. Please try again.');
     }
   };

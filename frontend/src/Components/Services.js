@@ -1,10 +1,30 @@
-import React from "react";
+import React,{ useEffect } from "react";
 import Navbar from "./Navbar";
+import { useNavigate } from 'react-router-dom';
 import bgimg from "../Assets/Servicesbg.png";
 import { FaCogs, FaBolt, FaLightbulb, FaHeartbeat,  FaPlug, FaBatteryHalf, FaFan, FaSignal, FaTools,  } from "react-icons/fa"; // Import icons from react-icons
 import FooterSection from "./FooterSection"
 
 const Services = () => {
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+
+  const navigate = useNavigate(); // useNavigate hook for navigation
+
+  // Function to handle click event
+  
+  const handleAppointmentClick = () => {
+    if (!localStorage.getItem('token')) {
+      navigate('/login', { state: { from: '/appointmentForm' } });
+      return;
+    }
+    navigate('/appointmentForm');
+  };
+
+
   return (
     <div className="relative min-h-screen bg-gray-100">
       <Navbar />
@@ -17,7 +37,7 @@ const Services = () => {
         <img src={bgimg2} alt="Background 2" className="w-full h-full object-cover" />
       </div> */}
 
-      <div className="relative z-10 container mx-auto p-8">
+      <div className="relative z-10 container mx-auto p-8 ">
         <h1 className="text-3xl font-bold mt-14 mb-4 bg-orange-500 text-white py-2 px-4 rounded-lg text-center">
           Our Services
         </h1>
@@ -144,6 +164,17 @@ const Services = () => {
 
 
         </div>
+        <div className="flex flex-col items-center">
+        <button
+          onClick={handleAppointmentClick}
+          className="w-25% mt-8 rounded-full bg-white  text-orange-500 hover:bg-orange-500 hover:text-white py-3 px-6 font-bold text-xl rounded transition duration-300"
+          style={{ border: '2px solid orange',}}
+        >
+          Book an Appointment
+        </button>
+        </div>
+
+
       </div>
       <FooterSection />
 

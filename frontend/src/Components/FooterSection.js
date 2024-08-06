@@ -50,7 +50,7 @@ const FooterSection = () => {
           <ul className="space-y-2">
             <li className="flex items-center">
             <FaAddressCard size={20} className="text-white-600 m-4"/>            
-              <span>G-9, Islamabad, Pakistan</span>
+              <span>H-10, Islamabad, Pakistan</span>
             </li>
             <li className="flex items-center">
             <FaPhone size={20} className="text-white-600 m-4"/>            
@@ -66,7 +66,7 @@ const FooterSection = () => {
         {/* Section 4: Google Map and "To Top" arrow */}
         <div className="md:w-1/4 flex flex-col items-center">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.489844115597!2d-74.006022!3d40.712784!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083d%3A0xc80b8f06e177fe62!2sNew+York%2C+NY!5e0!3m2!1sen!2sus!4v1643723431151!5m2!1sen!2sus"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d26565.458878697675!2d73.0287094!3d33.6653914!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38df95906a03cfff%3A0x2b2f1c1c99b676ce!2sInternational%20Islamic%20University%20Islamabad%20(IIUI)!5e0!3m2!1sen!2s!4v1722747022399!5m2!1sen!2s"
             width="200"
             height="200"
             className="mb-4"

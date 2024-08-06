@@ -1,29 +1,51 @@
-// src/components/CartContext.js
-import React, { createContext, useState, useContext } from 'react';
+// src/contexts/CartContext.js
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
-export const CartContext = createContext();
+const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(() => {
+    const storedCartItems = localStorage.getItem('cartItems');
+    return storedCartItems ? JSON.parse(storedCartItems) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+  }, [cartItems]);
 
   const handleAddToCart = (product) => {
-    setCartItems(prevItems => {
+    setCartItems((prevItems) => {
       const existingProductIndex = prevItems.findIndex(item => item.id === product.id);
-
       if (existingProductIndex >= 0) {
         const updatedCartItems = [...prevItems];
-        updatedCartItems[existingProductIndex].quantity += product.quantity;
+        updatedCartItems[existingProductIndex].quantity += product.quantity || 1;
         return updatedCartItems;
       } else {
-        return [...prevItems, product];
+        return [...prevItems, { ...product, quantity: product.quantity || 1 }];
       }
     });
   };
 
-  const handleRemoveFromCart = (index) => {
-    setCartItems(prevItems => prevItems.filter((item, i) => i !== index));
+  const handleRemoveFromCart = (productId) => {
+    setCartItems((prevItems) => prevItems.filter((item) => item.id !== productId));
+  };
+
+  const handleIncreaseQuantity = (productId) => {
+    setCartItems((prevItems) => 
+      prevItems.map((item) => 
+        item.id === productId ? { ...item, quantity: item.quantity + 1 } : item
+      )
+    );
+  };
+
+  const handleDecreaseQuantity = (productId) => {
+    setCartItems((prevItems) => 
+      prevItems.map((item) => 
+        item.id === productId && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
+      )
+    );
   };
 
   const calculateTotal = () => {
@@ -31,7 +53,7 @@ export const CartProvider = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, handleAddToCart, handleRemoveFromCart, calculateTotal }}>
+    <CartContext.Provider value={{ cartItems, handleAddToCart, handleRemoveFromCart, handleIncreaseQuantity, handleDecreaseQuantity, calculateTotal }}>
       {children}
     </CartContext.Provider>
   );
