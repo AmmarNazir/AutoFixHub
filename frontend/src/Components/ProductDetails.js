@@ -1,5 +1,5 @@
 // src/components/ProductDetails.js
-import React, { useState, useContext } from 'react';
+import React, { useState} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useCart } from './CartContext'; // Correct import
 import Navbar from './Navbar';

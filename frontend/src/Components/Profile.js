@@ -168,7 +168,7 @@ const Profile = () => {
 
       <div className="max-w-xl mx-auto my-10 bg-white p-8 rounded-lg shadow">
         <h2 className="text-2xl font-bold mb-6 text-center">Ongoing and Previous Orders</h2>
-        {user && user.orders.length > 0 ? (
+        {user && user.orders && user.orders.length > 0 ? (
           user.orders.map(order => (
             <div key={order._id} className="mb-4 p-4 border rounded">
               <p><strong>Order ID:</strong> {order._id}</p>
@@ -183,7 +183,7 @@ const Profile = () => {
 
       <div className="max-w-xl mx-auto my-10 bg-white p-8 rounded-lg shadow">
         <h2 className="text-2xl font-bold mb-6 text-center">Ongoing and Previous Appointments</h2>
-        {user && user.appointments.length > 0 ? (
+        {user && user.appointments && user.appointments.length > 0 ? (
           user.appointments.map(appointment => (
             <div key={appointment._id} className="mb-4 p-4 border rounded">
               <p><strong>Appointment ID:</strong> {appointment._id}</p>

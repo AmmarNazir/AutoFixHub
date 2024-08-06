@@ -1,27 +1,30 @@
-// controllers/userController.js
 const User = require("../models/User");
-const authUtils = require("../utils/authUtils");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const { secretKey } = require("../config");
-const bcrypt = require('bcryptjs');
 
 const userController = {
   register: async (req, res) => {
     try {
       const { username, email, password } = req.body;
-      console.log("Registering user:", { username, email });
 
+      // Check if the username or email already exists in the database
       const existingUser = await User.findOne({ $or: [{ username }, { email }] });
       if (existingUser) {
-        console.log("User already exists:", existingUser);
         return res.status(400).json({ message: "Username or email already exists" });
       }
 
-      const newUser = new User({ username, email, password });
-      await newUser.save();
-      console.log("New user saved:", newUser);
+      // Hash the password before storing it in the database
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-      const token = authUtils.generateToken({ userId: newUser._id }, secretKey, { expiresIn: "1h" });
-      console.log("Generated token:", token);
+      // Create a new user document
+      const newUser = new User({ username, email, password: hashedPassword });
+
+      // Save the new user to the database
+      await newUser.save();
+
+      // Generate JWT token for the newly registered user
+      const token = jwt.sign({ userId: newUser._id }, secretKey, { expiresIn: "1h" });
 
       res.status(201).json({ message: "User registered successfully", token });
     } catch (error) {
@@ -33,22 +36,21 @@ const userController = {
   login: async (req, res) => {
     try {
       const { username, password } = req.body;
-      console.log("Logging in user:", { username });
 
+      // Find the user by username
       const user = await User.findOne({ username });
       if (!user) {
-        console.log("User not found with username:", username);
         return res.status(401).json({ message: "Invalid username or password" });
       }
 
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        console.log("Invalid password for user:", username);
+      // Check if the provided password matches the stored password
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
         return res.status(401).json({ message: "Invalid username or password" });
       }
 
-      const token = authUtils.generateToken({ userId: user._id }, secretKey, { expiresIn: "1h" });
-      console.log("Generated token for login:", token);
+      // Generate JWT token for the authenticated user
+      const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: "1h" });
 
       res.status(200).json({ token });
     } catch (error) {
@@ -59,42 +61,44 @@ const userController = {
 
   getUserProfile: async (req, res) => {
     try {
-      const user = await User.findById(req.user.id).populate('orders').populate('appointments');
+      const user = await User.findById(req.user.userId).select("-password");
       if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+        return res.status(404).json({ message: "User not found" });
       }
-      res.json(user);
+      res.status(200).json(user);
     } catch (error) {
-      res.status(500).json({ message: 'Server error' });
+      console.error("Error fetching user profile:", error);
+      res.status(500).json({ message: "Server Error" });
     }
   },
 
   updateUserProfile: async (req, res) => {
-    const { username, email } = req.body;
-    const profileImage = req.file ? req.file.path : undefined;
-
     try {
-      const user = await User.findById(req.user.id);
-      if (!user) return res.status(404).json({ message: 'User not found' });
+      const { username, email } = req.body;
+      const updateData = { username, email };
 
-      if (username) user.username = username;
-      if (email) user.email = email;
-      if (profileImage) user.profileImage = profileImage;
+      if (req.file) {
+        updateData.profileImage = req.file.path;
+      }
 
-      await user.save();
-      res.json(user);
+      const user = await User.findByIdAndUpdate(req.user.userId, updateData, { new: true });
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      res.status(200).json(user);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      console.error("Error updating user profile:", error);
+      res.status(500).json({ message: "Server Error" });
     }
   },
 
   deleteUserAccount: async (req, res) => {
     try {
-      const user = await User.findByIdAndDelete(req.user.id);
-      if (!user) return res.status(404).json({ message: 'User not found' });
-      res.json({ message: 'Account deleted' });
+      await User.findByIdAndDelete(req.user.userId);
+      res.status(200).json({ message: "User account deleted successfully" });
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      console.error("Error deleting user account:", error);
+      res.status(500).json({ message: "Server Error" });
     }
   },
 };
