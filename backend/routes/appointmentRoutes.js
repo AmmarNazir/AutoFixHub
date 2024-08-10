@@ -4,11 +4,15 @@ const router = express.Router();
 const {
     createAppointment,
     getAppointment,
-    updateAppointment
+    updateAppointment,
+    assignMechanic
 } = require('../controllers/appointmentController');
 
 router.post('/', createAppointment);
 router.get('/', getAppointment);
 router.put('/:id', updateAppointment);
+
+// New route for assigning a mechanic
+router.put('/:id/assign', assignMechanic);
 
 module.exports = router;

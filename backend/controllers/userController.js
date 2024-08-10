@@ -24,7 +24,7 @@ const userController = {
       await newUser.save();
 
       // Generate JWT token for the newly registered user
-      const token = jwt.sign({ userId: newUser._id }, secretKey, { expiresIn: "1h" });
+      const token = jwt.sign({ userId: newUser._id }, secretKey, { expiresIn: "5h" });
 
       res.status(201).json({ message: "User registered successfully", token });
     } catch (error) {
@@ -50,7 +50,7 @@ const userController = {
       }
 
       // Generate JWT token for the authenticated user
-      const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: "1h" });
+      const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: "5h" });
 
       res.status(200).json({ token });
     } catch (error) {
@@ -78,7 +78,8 @@ const userController = {
       const updateData = { username, email };
 
       if (req.file) {
-        updateData.profileImage = req.file.path;
+        // Save the relative path to the uploaded image
+        updateData.profileImage = `/uploads/${req.file.filename}`;
       }
 
       const user = await User.findByIdAndUpdate(req.user.userId, updateData, { new: true });
@@ -94,7 +95,10 @@ const userController = {
 
   deleteUserAccount: async (req, res) => {
     try {
-      await User.findByIdAndDelete(req.user.userId);
+      const user = await User.findByIdAndDelete(req.user.userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
       res.status(200).json({ message: "User account deleted successfully" });
     } catch (error) {
       console.error("Error deleting user account:", error);

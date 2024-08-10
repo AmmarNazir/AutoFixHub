@@ -99,7 +99,7 @@ const Profile = () => {
   return (
     <div className="container mx-auto px-4">
       <Navbar />
-      <h2 className="text-3xl font-bold mt-24 mb-4 bg-orange-500 text-white py-2 px-4 rounded-lg text-center">Profile</h2>
+      <h2 className="text-3xl font-bold mt-28 mb-4 bg-orange-500 text-white py-2 px-4 rounded-lg text-center">Profile</h2>
       {error && <p className="text-red-500 text-center">{error}</p>}
       {user ? (
         <div className="flex flex-col md:flex-row items-center justify-center">

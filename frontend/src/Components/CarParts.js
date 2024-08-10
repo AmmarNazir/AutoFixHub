@@ -41,7 +41,7 @@ const CarParts = () => {
   return (
     <div className="container mx-auto pt-20">
       <Navbar />
-      <h1 className="text-3xl font-bold m-4 bg-orange-500 text-white py-2 px-4 rounded-lg text-center">
+      <h1 className="text-3xl font-bold mt-8 bg-orange-500 text-white py-2 px-4 rounded-lg text-center">
         Car Parts
       </h1>
       <p className="text-lg mb-8 text-center font-bold">

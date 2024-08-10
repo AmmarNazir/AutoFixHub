@@ -38,7 +38,7 @@ const Services = () => {
       </div> */}
 
       <div className="relative z-10 container mx-auto p-8 ">
-        <h1 className="text-3xl font-bold mt-14 mb-4 bg-orange-500 text-white py-2 px-4 rounded-lg text-center">
+        <h1 className="text-3xl font-bold mt-20 mb-4 bg-orange-500 text-white py-2 px-4 rounded-lg text-center">
           Our Services
         </h1>
         <p className="text-lg mb-8 text-center font-bold">

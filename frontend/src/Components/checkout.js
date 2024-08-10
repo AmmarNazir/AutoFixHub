@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
+import { useCart } from './CartContext'; 
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -12,35 +13,37 @@ const CheckoutForm = () => {
   const elements = useElements();
   const location = useLocation();
   const navigate = useNavigate();
-  const totalAmount = location.state?.totalAmount || 0; // Fetch the total amount from location state
+  const totalAmount = location.state?.totalAmount || 0;
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const { clearCart } = useCart(); // Access the clearCart function from the CartContext
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
-    setError(''); // Reset error message
-  
+    setError('');
+
     if (!stripe || !elements) {
       setLoading(false);
       return;
     }
-  
+
     const card = elements.getElement(CardElement);
-  
+
     try {
       console.log(`Creating payment intent for amount: ${totalAmount * 100}`);
       const response = await axios.post('http://localhost:3000/api/create-payment-intent', {
-        amount: totalAmount * 100 // Convert to cents
+        amount: totalAmount * 100
       });
-  
+
       console.log('Payment intent response:', response);
       const { data } = response;
       console.log('Payment intent created, clientSecret:', data.clientSecret);
-  
+
       const paymentResult = await stripe.confirmCardPayment(data.clientSecret, {
         payment_method: {
           card,
@@ -53,29 +56,37 @@ const CheckoutForm = () => {
           },
         },
       });
-  
+
       if (paymentResult.error) {
         console.error('Payment error:', paymentResult.error.message);
         setError(paymentResult.error.message);
       } else {
         if (paymentResult.paymentIntent.status === 'succeeded') {
           console.log('Payment successful:', paymentResult.paymentIntent);
-          // Save order in DB
-          const token = localStorage.getItem('token'); // Get token from local storage
+          
+          const token = localStorage.getItem('token');
           const orderData = {
             items: [], // Add items array if needed with proper structure
-            totalAmount: paymentResult.paymentIntent.amount / 100, // Convert from cents to dollars
+            totalAmount: paymentResult.paymentIntent.amount / 100,
           };
+
+          console.log('Order data being sent:', orderData);
+
           try {
-            await axios.post('http://localhost:3000/api/orders', orderData, {
+            const orderResponse = await axios.post('http://localhost:3000/api/orders', orderData, {
               headers: {
-                Authorization: `Bearer ${token}`, // Include token in headers
+                Authorization: `Bearer ${token}`,
               },
             });
+
+            console.log('Order response:', orderResponse);
             alert('Payment Successful!');
+
+            clearCart(); // Clear the cart after the order is successfully placed
+
             navigate('/'); // Redirect to home or another page
           } catch (orderError) {
-            console.error('Order creation error:', orderError);
+            console.error('Order creation error:', orderError.response ? orderError.response.data : orderError.message);
             setError('Order creation failed. Please contact support.');
           }
         } else {
@@ -83,18 +94,17 @@ const CheckoutForm = () => {
         }
       }
     } catch (error) {
-      console.error('Error during payment processing:', error);
+      console.error('Error during payment processing:', error.response ? error.response.data : error.message);
       setError('Payment failed. Please try again.');
     }
-  
+
     setLoading(false);
   };
-  
 
   return (
     <div className="container mx-auto mt-10">
       <Navbar />
-      <h2 className="text-3xl font-bold mt-24 mb-4 bg-orange-500 text-white py-2 px-4 rounded-lg text-center">Checkout</h2>
+      <h2 className="text-3xl font-bold mt-28 mb-4 bg-orange-500 text-white py-2 px-4 rounded-lg text-center">Checkout</h2>
       {error && <div className="text-red-500 text-center mb-4">{error}</div>}
       <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white p-8 rounded-lg shadow">
         <div className="mb-4">

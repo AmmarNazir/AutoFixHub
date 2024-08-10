@@ -11,7 +11,7 @@ const AboutUs = () => {
     <div className="flex flex-col lg:flex-row items-center justify-center py-20">
         <Navbar/>
       <div className="lg:w-1/2 xl:w-2/3 pr-20">
-        <h1 className="text-3xl font-bold m-4 line-orange-500 text-center" >About Our Workshop</h1>
+        <h1 className="text-3xl font-bold m-8 line-orange-500 text-center" >About Our Workshop</h1>
         <p className="text-lg font-bold text-center text-gray-400">
         Welcome to AutoFixHub, your one-stop workshop for all your car repair needs! </p>
         <h1 className="text-5xl mb-4  text-center" >Best Auto Workshop in Islamabad</h1>
