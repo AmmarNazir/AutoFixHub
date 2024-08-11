@@ -40,17 +40,22 @@ const orderController = {
 
   getOrderById: async (req, res) => {
     try {
-      const order = await Order.findById(req.params.id);
+      const order = await Order.findById(req.params.id)
+        .populate({
+          path: 'products.product',
+          model: 'Product',
+          select: 'name price' // Specify the fields you want to select from the Product model
+        })
+        .exec();
+  
       if (!order) {
         return res.status(404).json({ message: 'Order not found' });
       }
-      if (order.user.toString() !== req.user.userId) {
-        return res.status(403).json({ message: 'Unauthorized' });
-      }
+  
       res.status(200).json(order);
     } catch (error) {
-      console.error('Error getting order:', error);
-      res.status(500).json({ message: 'Failed to get order', error: error.message });
+      console.error('Error fetching order:', error);
+      res.status(500).json({ message: 'Failed to fetch order' });
     }
   },
 

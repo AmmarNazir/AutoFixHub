@@ -1,3 +1,4 @@
+// Navbar.js
 import React, { useState, useEffect } from "react";
 import { FaCartPlus, FaUserCircle, FaBars, FaTimes } from "react-icons/fa";
 import logo1 from "../Assets/logo1.png";
@@ -24,7 +25,8 @@ const Navbar = () => {
           },
         });
         if (res.data.profileImage) {
-          setProfileImage(`http://localhost:3000/${res.data.profileImage}`);
+          const imageUrl = `http://localhost:3000${res.data.profileImage}`;
+          setProfileImage(imageUrl);
         }
         setUsername(res.data.username);
       } catch (error) {
@@ -42,14 +44,13 @@ const Navbar = () => {
   return (
     <nav className="bg-black bg-opacity-50 shadow-md p-2 fixed top-0 left-0 w-full z-50">
       <div className="container mx-auto flex items-center justify-between py-2 px-4 sm:px-6 lg:px-8">
-        
         {/* Left: Logo and Company Name */}
         <div className="flex items-center">
           <a href="/">
             <img
               src={logo1}
               alt="Logo"
-             className="h-14 w-14 sm:h-16 sm:w-16"
+              className="h-14 w-14 sm:h-16 sm:w-16"
             />
           </a>
           <h1 className="text-orange-500 ml-3 text-lg sm:text-2xl font-bold font-mono hidden lg:block">
@@ -62,11 +63,15 @@ const Navbar = () => {
           className="flex items-center cursor-pointer"
           onClick={handleProfileClick}
         >
-          <img
-            src={profileImage || <FaUserCircle size={24} />}
-            alt="User Profile"
-            className="h-12 w-12 rounded-full object-cover"
-          />
+          {profileImage ? (
+            <img
+              src={profileImage}
+              alt="User Profile"
+              className="h-12 w-12 rounded-full object-cover"
+            />
+          ) : (
+            <FaUserCircle size={24} className="text-gray-500" />
+          )}
           <span className="text-white ml-2 text-lg font-semibold hidden lg:block">
             {username}
           </span>

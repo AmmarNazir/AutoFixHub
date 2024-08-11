@@ -14,13 +14,8 @@ const userController = {
         return res.status(400).json({ message: "Username or email already exists" });
       }
 
-      // Hash the password before storing it in the database
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      // Create a new user document
-      const newUser = new User({ username, email, password: hashedPassword });
-
-      // Save the new user to the database
+      // Create a new user document with the hashed password
+      const newUser = new User({ username, email, password });
       await newUser.save();
 
       // Generate JWT token for the newly registered user
@@ -50,7 +45,7 @@ const userController = {
       }
 
       // Generate JWT token for the authenticated user
-      const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: "5h" });
+      const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: "1h" });
 
       res.status(200).json({ token });
     } catch (error) {
@@ -61,7 +56,17 @@ const userController = {
 
   getUserProfile: async (req, res) => {
     try {
-      const user = await User.findById(req.user.userId).select("-password");
+      const user = await User.findById(req.user.userId)
+        .select("-password")
+        .populate({
+          path: 'orders',
+          populate: { path: 'products.product' }  // Adjust based on your schema
+        })
+        .populate({
+          path: 'appointments',
+          populate: { path: 'service' }  // Adjust based on your schema
+        });
+
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -78,7 +83,6 @@ const userController = {
       const updateData = { username, email };
 
       if (req.file) {
-        // Save the relative path to the uploaded image
         updateData.profileImage = `/uploads/${req.file.filename}`;
       }
 

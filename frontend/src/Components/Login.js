@@ -11,7 +11,7 @@ const Login = ({ onLogin }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
-
+  
     try {
       const response = await fetch('http://localhost:3000/api/users/login', {
         method: 'POST',
@@ -20,18 +20,18 @@ const Login = ({ onLogin }) => {
         },
         body: JSON.stringify({ username, password }),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
         localStorage.setItem('token', data.token);
-        onLogin();
-        navigate('/');
+        onLogin();  // Ensure this function is correctly implemented
+        navigate('/');  // Redirects to the homepage
       } else {
-        setError(data.message || 'Login failed');
+        setError(data.message || 'Login failed');  // Displays API or fallback error
       }
     } catch (error) {
-      setError('An error occurred. Please try again.');
+      setError('An error occurred. Please try again.');  // General error for network issues or others
     }
   };
 

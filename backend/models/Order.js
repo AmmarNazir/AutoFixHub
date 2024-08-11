@@ -1,5 +1,17 @@
-// models/Order.js
 const mongoose = require('mongoose');
+
+// Define a sub-schema for the products array
+const orderProductSchema = new mongoose.Schema({
+  product: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product',
+    required: true
+  },
+  quantity: {
+    type: Number,
+    required: true
+  }
+});
 
 const orderSchema = new mongoose.Schema({
   user: {
@@ -7,19 +19,7 @@ const orderSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  products: [
-    {
-      product: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product',
-        required: true
-      },
-      quantity: {
-        type: Number,
-        required: true
-      }
-    }
-  ],
+  products: [orderProductSchema], // Use the sub-schema here
   totalAmount: {
     type: Number,
     required: true

@@ -47,11 +47,11 @@ const Services = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           
           <div className="p-6 m-6">
-            <div className="bg-white rounded-lg shadow-lg transition duration-300 ease-in-out hover:bg-blue-900 relative overflow-hidden"
+            <div className="bg-white rounded-lg shadow-lg transition duration-300 ease-in-out hover:bg-blue-900 hover:text-white relative overflow-hidden"
               onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0px 0px 10px 5px rgba(255, 166, 0, 1)" }}
               onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0px 0px 10px 0px rgba(0, 0, 0, 0.1)" }}>
               <div className="absolute bottom-0 left-0 w-full h-2 bg-orange-500 transform translate-y-full transition-transform duration-300 ease-in-out"></div>
-              <div className="flex flex-col justify-center items-center p-4">
+              <div className="flex flex-col justify-center items-center  p-4">
                 <FaCogs size={35} className="text-orange-600 m-4" />
                 <h2 className="text-2xl font-bold text-gray-800 text-center mb-2 hover:text-white">Diagnostic Scanning</h2>
                 <p className="text-lg text-gray-500 text-center hover:text-white">Our state-of-the-art diagnostic scanning technology enables us to identify and troubleshoot issues in your car’s engine, transmission, brakes, and other systems quickly and accurately.</p>
@@ -78,7 +78,7 @@ const Services = () => {
               onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0px 0px 10px 0px rgba(0, 0, 0, 0.1)" }}>
               <div className="absolute bottom-0 left-0 w-full h-2 bg-orange-500 transform translate-y-full transition-transform duration-300 ease-in-out"></div>
               <div className="flex flex-col justify-center items-center p-4">
-                <FaHeartbeat size={35} className="text-orange-600 m-4 hover:text-white" />
+                <FaHeartbeat size={35} className="text-orange-600 m-4 " />
                 <h2 className="text-2xl font-bold text-gray-800 text-center mb-2 hover:text-white">Air Conditioning and Heating System Diagnosis</h2>
                 <p className="text-lg text-gray-500 text-center hover:text-white">Our team can diagnose and repair any issues with your car’s air conditioning and heating system to ensure your comfort while driving.</p>
               </div>
