@@ -18,7 +18,7 @@ const Navbar = () => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("authToken");
         const res = await axios.get("http://localhost:3000/api/users/profile", {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -47,11 +47,7 @@ const Navbar = () => {
         {/* Left: Logo and Company Name */}
         <div className="flex items-center">
           <a href="/">
-            <img
-              src={logo1}
-              alt="Logo"
-              className="h-14 w-14 sm:h-16 sm:w-16"
-            />
+            <img src={logo1} alt="Logo" className="h-14 w-14 sm:h-16 sm:w-16" />
           </a>
           <h1 className="text-orange-500 ml-3 text-lg sm:text-2xl font-bold font-mono hidden lg:block">
             AutoFixHub
@@ -97,7 +93,10 @@ const Navbar = () => {
             <FaCartPlus size={24} />
           </a>
           <div className="sm:hidden">
-            <button onClick={toggleMenu} className="text-white focus:outline-none">
+            <button
+              onClick={toggleMenu}
+              className="text-white focus:outline-none"
+            >
               {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
             </button>
           </div>
@@ -108,22 +107,34 @@ const Navbar = () => {
       {isOpen && (
         <ul className="sm:hidden bg-black bg-opacity-90 p-4">
           <li className="mb-2">
-            <a href="/services" className="text-white hover:text-orange-300 block">
+            <a
+              href="/services"
+              className="text-white hover:text-orange-300 block"
+            >
               Services
             </a>
           </li>
           <li className="mb-2">
-            <a href="/car-parts" className="text-white hover:text-orange-300 block">
+            <a
+              href="/car-parts"
+              className="text-white hover:text-orange-300 block"
+            >
               Car Parts
             </a>
           </li>
           <li className="mb-2">
-            <a href="/about-us" className="text-white hover:text-orange-300 block">
+            <a
+              href="/about-us"
+              className="text-white hover:text-orange-300 block"
+            >
               About Us
             </a>
           </li>
           <li className="mb-2">
-            <a href="/contact" className="text-white hover:text-orange-300 block">
+            <a
+              href="/contact"
+              className="text-white hover:text-orange-300 block"
+            >
               Contact
             </a>
           </li>

@@ -1,44 +1,39 @@
-const mongoose = require('mongoose');
-
-// Define a sub-schema for the products array
-const orderProductSchema = new mongoose.Schema({
-  product: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Product',
-    required: true
-  },
-  quantity: {
-    type: Number,
-    required: true
-  }
-});
+const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    ref: "User",
+    required: true,
   },
-  products: [orderProductSchema], // Use the sub-schema here
+  products: [
+    {
+      product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+        required: true,
+      },
+      title: String,
+      quantity: Number,
+      price: Number,
+      image: String,
+    },
+  ],
   totalAmount: {
     type: Number,
-    required: true
+    required: true,
   },
   status: {
     type: String,
-    enum: ['Pending', 'Processing', 'Completed', 'Cancelled'],
-    default: 'Pending',
+    enum: ["Pending", "Processing", "Completed"],
+    default: "Pending",
   },
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
-  updatedAt: {
-    type: Date,
-    default: Date.now
-  }
 });
 
-const Order = mongoose.model('Order', orderSchema);
+const Order = mongoose.model("Order", orderSchema);
 
 module.exports = Order;

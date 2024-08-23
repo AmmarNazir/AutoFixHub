@@ -1,41 +1,37 @@
-// src/components/CarParts.js
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Navbar from './Navbar';
-import FooterSection from './FooterSection';
-import { useCart } from './CartContext';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import Navbar from "./Navbar";
+import FooterSection from "./FooterSection";
+import { useCart } from "./CartContext";
 
 const CarParts = () => {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
-  const products = [
-    { id: 1, title: 'Product Title 1', price: 19.99, image: 'https://via.placeholder.com/300' },
-    { id: 2, title: 'Product Title 2', price: 29.99, image: 'https://via.placeholder.com/300' },
-    { id: 3, title: 'Product Title 3', price: 39.99, image: 'https://via.placeholder.com/300' },
-    { id: 4, title: 'Product Title 4', price: 49.99, image: 'https://via.placeholder.com/300' },
-    { id: 5, title: 'Product Title 5', price: 19.99, image: 'https://via.placeholder.com/300' },
-    { id: 6, title: 'Product Title 6', price: 19.99, image: 'https://via.placeholder.com/300' },
-    { id: 7, title: 'Product Title 7', price: 19.99, image: 'https://via.placeholder.com/300' },
-    { id: 8, title: 'Product Title 8', price: 19.99, image: 'https://via.placeholder.com/300' },
-    { id: 9, title: 'Product Title 9', price: 19.99, image: 'https://via.placeholder.com/300' },
-    { id: 10, title: 'Product Title 10', price: 19.99, image: 'https://via.placeholder.com/300' },
-    { id: 11, title: 'Product Title 11', price: 19.99, image: 'https://via.placeholder.com/300' },
-    { id: 12, title: 'Product Title 12', price: 19.99, image: 'https://via.placeholder.com/300' },
-  ];
-
+  const [products, setProducts] = useState([]);
   const { handleAddToCart } = useCart();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    fetchProducts(); // Fetch products on component mount
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/products"); // Fetch products from your backend
+      setProducts(response.data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
   const onAddToCart = (product) => {
-    if (!localStorage.getItem('token')) {
-      navigate('/login', { state: { from: '/car-parts' } });
+    if (!localStorage.getItem("authToken")) {
+      navigate("/login", { state: { from: "/car-parts" } });
       return;
     }
     const cartProduct = { ...product, quantity: 1 };
     handleAddToCart(cartProduct);
-    navigate('/cart');
+    navigate("/cart");
   };
 
   return (
@@ -48,11 +44,18 @@ const CarParts = () => {
         At AutoFixHub, we provide the best quality auto parts at good rates.
       </p>
       <div className="flex flex-wrap justify-center mb-4">
-        {products.map(product => (
-          <div key={product.id} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-4">
+        {products.map((product) => (
+          <div
+            key={product._id}
+            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-4"
+          >
             <div className="bg-white shadow-md rounded overflow-hidden">
-              <a href={`/product/${product.id}`}>
-                <img src={product.image} alt={product.title} className="w-full h-64 object-cover" />
+              <a href={`/product/${product._id}`}>
+                <img
+                  src={`http://localhost:3000${product.image}`}
+                  alt={product.title}
+                  className="w-full h-64 object-cover"
+                />
               </a>
               <div className="p-4 flex flex-col items-center">
                 <h2 className="text-lg font-bold mb-2">{product.title}</h2>

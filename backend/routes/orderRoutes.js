@@ -1,13 +1,40 @@
-// routes/orderRoutes.js
 const express = require("express");
 const router = express.Router();
 const orderController = require("../controllers/orderController");
-const authMiddleware = require('../middleware/authMiddleware');
+const authenticateToken = require("../middleware/authMiddleware");
+const authenticateAdmin = require("../middleware/adminAuthMiddleware");
 
-router.post("/", authMiddleware, orderController.createOrder);
-router.get("/", authMiddleware, orderController.getOrders);
-router.get("/:id", authMiddleware, orderController.getOrderById);
-router.put("/:id", authMiddleware, orderController.updateOrder);
-router.delete("/:id", authMiddleware, orderController.deleteOrder);
+// Route for users to create an order
+router.post(
+  "/",
+  authenticateToken, // Only require authentication, not admin privileges
+  orderController.createOrder
+);
+
+// Admin routes for managing orders
+router.get(
+  "/",
+  authenticateToken,
+  authenticateAdmin,
+  orderController.getOrders
+);
+router.get(
+  "/:id",
+  authenticateToken,
+  authenticateAdmin,
+  orderController.getOrderById
+);
+router.put(
+  "/:id",
+  authenticateToken,
+  authenticateAdmin,
+  orderController.updateOrder
+);
+router.delete(
+  "/:id",
+  authenticateToken,
+  authenticateAdmin,
+  orderController.deleteOrder
+);
 
 module.exports = router;

@@ -1,6 +1,21 @@
 // controllers/productController.js
 const Product = require("../models/Product");
 
+const multer = require("multer");
+const path = require("path");
+
+// Set up multer for file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/"); // Store uploaded files in 'uploads' folder
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname)); // File name
+  },
+});
+
+const upload = multer({ storage: storage });
+
 async function getProducts(req, res) {
   try {
     const products = await Product.find();
@@ -25,7 +40,7 @@ async function createProduct(req, res) {
     title: req.body.title,
     price: req.body.price,
     description: req.body.description,
-    image: req.body.image
+    image: `/uploads/${req.file.filename}`, // Save the file path to the database
   });
 
   try {
@@ -43,8 +58,9 @@ async function updateProduct(req, res) {
 
     if (req.body.title != null) product.title = req.body.title;
     if (req.body.price != null) product.price = req.body.price;
-    if (req.body.description != null) product.description = req.body.description;
-    if (req.body.image != null) product.image = req.body.image;
+    if (req.body.description != null)
+      product.description = req.body.description;
+    if (req.file != null) product.image = `/uploads/${req.file.filename}`;
 
     const updatedProduct = await product.save();
     res.json(updatedProduct);
@@ -70,4 +86,5 @@ module.exports = {
   createProduct,
   updateProduct,
   deleteProduct,
+  upload,
 };

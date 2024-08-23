@@ -1,7 +1,28 @@
-const express = require('express');
+// routes/serviceRoutes.js
+const express = require("express");
 const router = express.Router();
-const servicesController = require('../controllers/servicesController');
+const serviceController = require("../controllers/serviceController");
+const authenticateToken = require("../middleware/authMiddleware");
+const authenticateAdmin = require("../middleware/adminAuthMiddleware");
 
-router.get('/services', servicesController.getServices);
+router.post(
+  "/",
+  authenticateToken,
+  // authenticateAdmin,
+  serviceController.createService
+);
+router.get("/services", authenticateToken, serviceController.getServices);
+router.put(
+  "/:id",
+  authenticateToken,
+  // authenticateAdmin,
+  serviceController.updateService
+);
+router.delete(
+  "/:id",
+  authenticateToken,
+  // authenticateAdmin,
+  serviceController.deleteService
+);
 
 module.exports = router;

@@ -1,37 +1,51 @@
 // src/components/Login.js
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = ({ onLogin }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError('');
-  
+    setError("");
+
     try {
-      const response = await fetch('http://localhost:3000/api/users/login', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3000/api/users/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ username, password }),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
-        localStorage.setItem('token', data.token);
-        onLogin();  // Ensure this function is correctly implemented
-        navigate('/');  // Redirects to the homepage
+        localStorage.setItem("authToken", data.token);
+        // Save mechanicId in localStorage if the user is a mechanic
+        if (data.isMechanic) {
+          localStorage.setItem("mechanicId", data.userId);
+        }
+
+        // Call the onLogin callback
+        onLogin();
+
+        // Navigate to the appropriate dashboard based on the user's role
+        if (data.isAdmin) {
+          navigate("/admin/dashboard"); // Redirect to admin dashboard
+        } else if (data.isMechanic) {
+          navigate("/mechanic/dashboard"); // Redirect to mechanic dashboard
+        } else {
+          navigate("/"); // Redirect to regular user dashboard
+        }
       } else {
-        setError(data.message || 'Login failed');  // Displays API or fallback error
+        setError(data.message || "Login failed"); // Displays API or fallback error
       }
     } catch (error) {
-      setError('An error occurred. Please try again.');  // General error for network issues or others
+      setError("An error occurred. Please try again."); // General error for network issues or others
     }
   };
 
@@ -41,7 +55,9 @@ const Login = ({ onLogin }) => {
       {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
       <form onSubmit={handleLogin}>
         <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="username">Username</label>
+          <label className="block text-gray-700 mb-2" htmlFor="username">
+            Username
+          </label>
           <input
             type="text"
             id="username"
@@ -51,7 +67,9 @@ const Login = ({ onLogin }) => {
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="password">Password</label>
+          <label className="block text-gray-700 mb-2" htmlFor="password">
+            Password
+          </label>
           <input
             type="password"
             id="password"
@@ -68,7 +86,10 @@ const Login = ({ onLogin }) => {
         </button>
       </form>
       <p className="mt-4 text-center">
-        Don't have an account? <Link to="/signup" className="text-blue-500 hover:text-orange-500">Sign Up</Link>
+        Don't have an account?{" "}
+        <Link to="/signup" className="text-blue-500 hover:text-orange-500">
+          Sign Up
+        </Link>
       </p>
     </div>
   );

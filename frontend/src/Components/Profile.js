@@ -1,51 +1,57 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import Navbar from './Navbar';
-import { useNavigate } from 'react-router-dom';
-import { FaUserCircle } from 'react-icons/fa';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import Navbar from "./Navbar";
+import { useNavigate } from "react-router-dom";
+import { FaUserCircle } from "react-icons/fa";
 
 const Profile = ({ onProfileImageUpdate }) => {
   const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    profileImage: null,  // Initialize profileImage as null
+    username: "",
+    email: "",
+    profileImage: null,
   });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isMechanic, setIsMechanic] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("authToken");
         if (!token) {
-          setError('No token found');
+          setError("No token found");
           return;
         }
 
-        const res = await axios.get('http://localhost:3000/api/users/profile', {
+        const res = await axios.get("http://localhost:3000/api/users/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         if (res.data) {
-          const imageUrl = res.data.profileImage ? `http://localhost:3000${res.data.profileImage}` : null;
+          const imageUrl = res.data.profileImage
+            ? `http://localhost:3000${res.data.profileImage}`
+            : null;
           setUser(res.data);
           setFormData({
             username: res.data.username,
             email: res.data.email,
-            profileImage: imageUrl,  // Set profileImage in formData with the URL
+            profileImage: imageUrl,
           });
+
+          // Set roles
+          setIsAdmin(res.data.isAdmin);
+          setIsMechanic(res.data.isMechanic);
         } else {
-          throw new Error('Failed to fetch user data');
+          throw new Error("Failed to fetch user data");
         }
       } catch (error) {
         console.error(
-          'Error fetching user data:',
+          "Error fetching user data:",
           error.response ? error.response.data : error.message
         );
-        setError(
-          error.response ? error.response.data.message : error.message
-        );
+        setError(error.response ? error.response.data.message : error.message);
       }
     };
     fetchUser();
@@ -53,7 +59,7 @@ const Profile = ({ onProfileImageUpdate }) => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (name === 'profileImage') {
+    if (name === "profileImage") {
       setFormData({ ...formData, profileImage: files[0] });
     } else {
       setFormData({ ...formData, [name]: value });
@@ -63,74 +69,75 @@ const Profile = ({ onProfileImageUpdate }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData();
-    data.append('username', formData.username);
-    data.append('email', formData.email);
-    if (formData.profileImage instanceof File) data.append('profileImage', formData.profileImage);
+    data.append("username", formData.username);
+    data.append("email", formData.email);
+    if (formData.profileImage instanceof File)
+      data.append("profileImage", formData.profileImage);
 
     try {
       const res = await axios.put(
-        'http://localhost:3000/api/users/profile',
+        "http://localhost:3000/api/users/profile",
         data,
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
         }
       );
       if (res.data) {
         const imageUrl = `http://localhost:3000${res.data.profileImage}`;
-        setUser({ ...res.data, profileImage: imageUrl }); // Update user state with new image
-        setFormData({ ...formData, profileImage: imageUrl }); // Update formData state with new image
-        alert('Profile updated successfully!');
+        setUser({ ...res.data, profileImage: imageUrl });
+        setFormData({ ...formData, profileImage: imageUrl });
+        alert("Profile updated successfully!");
         if (onProfileImageUpdate) {
-          onProfileImageUpdate(imageUrl); // Notify parent (Navbar) of the image update
+          onProfileImageUpdate(imageUrl);
         }
       } else {
-        throw new Error('Failed to update profile');
+        throw new Error("Failed to update profile");
       }
     } catch (error) {
       console.error(
-        'Error updating profile:',
+        "Error updating profile:",
         error.response ? error.response.data : error.message
       );
-      setError(
-        error.response ? error.response.data.message : error.message
-      );
+      setError(error.response ? error.response.data.message : error.message);
     }
   };
 
   const handleLogout = () => {
-    if (window.confirm('Are you sure you want to logout?')) {
-      localStorage.removeItem('token');
-      navigate('/login', { replace: true });
+    if (window.confirm("Are you sure you want to logout?")) {
+      localStorage.removeItem("authToken");
+      navigate("/login", { replace: true });
     }
   };
 
   const handleDeleteAccount = async () => {
     if (
       window.confirm(
-        'Are you sure you want to delete your account? This action cannot be undone.'
+        "Are you sure you want to delete your account? This action cannot be undone."
       )
     ) {
       try {
-        await axios.delete('http://localhost:3000/api/users/profile', {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        await axios.delete("http://localhost:3000/api/users/profile", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
         });
-        localStorage.removeItem('token');
-        navigate('/signup', { replace: true });
+        localStorage.removeItem("authToken");
+        navigate("/signup", { replace: true });
       } catch (error) {
         console.error(
-          'Error deleting account:',
+          "Error deleting account:",
           error.response ? error.response.data : error.message
         );
-        setError(
-          error.response ? error.response.data.message : error.message
-        );
+        setError(error.response ? error.response.data.message : error.message);
       }
     }
   };
 
   return (
     <div className="container mx-auto px-4">
-      <Navbar />
+      {!isAdmin && !isMechanic && <Navbar />}
       <h2 className="text-3xl font-bold mt-28 mb-4 bg-orange-500 text-white py-2 px-4 rounded-lg text-center">
         Profile
       </h2>
@@ -227,70 +234,74 @@ const Profile = ({ onProfileImageUpdate }) => {
         </button>
       </div>
 
-      <div className="max-w-7xl mx-auto my-10">
-        <h2 className="text-2xl font-bold mb-6 text-center">
-          Ongoing and Previous Orders
-        </h2>
-        {user && user.orders && user.orders.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {user.orders.map((order) => (
-              <div
-                key={order._id}
-                className="p-4 border rounded-lg shadow bg-white"
-              >
-                <p>
-                  <strong>Order ID:</strong> {order._id}
-                </p>
-                <ul className="mt-2">
-                  {order.items.map((item, index) => (
-                    <li key={index} className="text-gray-700">
-                      {item.productName} (x{item.quantity}) - $
-                      {item.price * item.quantity}
-                    </li>
-                  ))}
-                </ul>
-                <p className="mt-4 text-lg font-bold">
-                  Total: ${order.totalAmount}
-                </p>
-                <p className="mt-2 text-sm text-gray-600">
-                  <strong>Status:</strong> {order.status}
-                </p>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p>No orders found.</p>
-        )}
-      </div>
+      {!isAdmin && !isMechanic && (
+        <div className="max-w-7xl mx-auto my-10">
+          <h2 className="text-2xl font-bold mb-6 text-center">
+            Ongoing and Previous Orders
+          </h2>
+          {user && user.orders && user.orders.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {user.orders.map((order) => (
+                <div
+                  key={order._id}
+                  className="p-4 border rounded-lg shadow bg-white"
+                >
+                  <p>
+                    <strong>Order ID:</strong> {order._id}
+                  </p>
+                  <ul className="mt-2">
+                    {order.items.map((item, index) => (
+                      <li key={index} className="text-gray-700">
+                        {item.productName} (x{item.quantity}) - $
+                        {item.price * item.quantity}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-4 text-lg font-bold">
+                    Total: ${order.totalAmount}
+                  </p>
+                  <p className="mt-2 text-sm text-gray-600">
+                    <strong>Status:</strong> {order.status}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p>No orders found.</p>
+          )}
+        </div>
+      )}
 
-      <div className="max-w-7xl mx-auto my-10">
-        <h2 className="text-2xl font-bold mb-6 text-center">
-          Ongoing and Previous Appointments
-        </h2>
-        {user && user.appointments && user.appointments.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {user.appointments.map((appointment) => (
-              <div
-                key={appointment._id}
-                className="p-4 border rounded-lg shadow bg-white"
-              >
-                <p>
-                  <strong>Service:</strong> {appointment.serviceName}
-                </p>
-                <p>
-                  <strong>Date:</strong>{' '}
-                  {new Date(appointment.date).toLocaleDateString()}
-                </p>
-                <p>
-                  <strong>Status:</strong> {appointment.status}
-                </p>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p>No appointments found.</p>
-        )}
-      </div>
+      {!isAdmin && !isMechanic && (
+        <div className="max-w-7xl mx-auto my-10">
+          <h2 className="text-2xl font-bold mb-6 text-center">
+            Ongoing and Previous Appointments
+          </h2>
+          {user && user.appointments && user.appointments.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {user.appointments.map((appointment) => (
+                <div
+                  key={appointment._id}
+                  className="p-4 border rounded-lg shadow bg-white"
+                >
+                  <p>
+                    <strong>Service:</strong> {appointment.serviceName}
+                  </p>
+                  <p>
+                    <strong>Date:</strong>{" "}
+                    {new Date(appointment.date).toLocaleDateString()}
+                  </p>
+                  <p>
+                    <strong>Status:</strong> {appointment.status}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p>No appointments found.</p>
+          )}
+        </div>
+      )}
     </div>
   );
 };

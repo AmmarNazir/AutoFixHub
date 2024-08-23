@@ -1,46 +1,46 @@
 // models/Appointment.js
-const mongoose = require('mongoose');
-const Mechanic = require('./Mechanic'); // Make sure to import the Mechanic model
+const mongoose = require("mongoose");
+const Mechanic = require("./Mechanic"); // Make sure to import the Mechanic model
 
 const appointmentSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    ref: "User",
+    required: true,
   },
   service: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Service',
-    required: true
+    ref: "Service",
+    required: true,
   },
   date: {
     type: Date,
-    required: true
+    required: true,
   },
   time: {
     type: String,
-    required: true
+    required: true,
   },
   duration: {
     type: Number,
-    required: true  // duration in minutes
+    required: true, // duration in minutes
   },
   assignedMechanic: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Mechanic', // Reference the Mechanic model
-    default: null
+    ref: "User", // Reference the Mechanic model
+    default: null,
   },
   status: {
     type: String,
-    enum: ['Pending', 'Assigned', 'Completed'],
-    default: 'Pending'
+    enum: ["Pending", "Assigned", "Completed"],
+    default: "Pending",
   },
   createdAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
-const Appointment = mongoose.model('Appointment', appointmentSchema);
+const Appointment = mongoose.model("Appointment", appointmentSchema);
 
 module.exports = Appointment;
