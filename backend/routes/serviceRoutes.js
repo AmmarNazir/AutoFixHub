@@ -11,7 +11,7 @@ router.post(
   // authenticateAdmin,
   serviceController.createService
 );
-router.get("/services", authenticateToken, serviceController.getServices);
+router.get("/", authenticateToken, serviceController.getServices);
 router.put(
   "/:id",
   authenticateToken,

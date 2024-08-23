@@ -157,7 +157,14 @@ const AppointmentForm = () => {
         duration,
       };
 
-      const res = await axios.post(
+      // Create an instance of axios with the default Authorization header
+      const axiosInstance = axios.create({
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const res = await axiosInstance.post(
         "http://localhost:3000/api/appointments",
         appointmentData
       );

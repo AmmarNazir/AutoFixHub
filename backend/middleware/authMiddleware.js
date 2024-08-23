@@ -1,11 +1,11 @@
 const jwt = require("jsonwebtoken");
 const { secretKey } = require("../config");
 
-// const generateToken = (user) => {
-//   return jwt.sign({ _id: user._id.toString() }, secretKey, {
-//     expiresIn: "1h",
-//   });
-// };
+const generateToken = (user) => {
+  return jwt.sign({ _id: user._id.toString() }, secretKey, {
+    expiresIn: "1h",
+  });
+};
 
 // const login = async (req, res) => {
 //   // After user is authenticated
