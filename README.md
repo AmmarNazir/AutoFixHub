@@ -190,9 +190,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 If you have any questions or suggestions, feel free to reach out:
 
-- Email: [your-email@example.com](mailto:ammarnazir864@gmail.com)
+- Email: [Mail me](mailto:ammarnazir864@gmail.com)
 - LinkedIn: [Your LinkedIn Profile](https://www.linkedin.com/in/yourprofile)
-- GitHub: [Your GitHub Profile](https://github.com/AmmarNazir)
+- GitHub: [ GitHub Profile](https://github.com/AmmarNazir)
 
 ---
 
