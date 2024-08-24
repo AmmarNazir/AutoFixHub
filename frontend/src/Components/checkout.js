@@ -68,9 +68,12 @@ const CheckoutForm = () => {
         setError(paymentResult.error.message);
       } else {
         if (paymentResult.paymentIntent.status === "succeeded") {
+          cartItems.forEach((item) => {
+            console.log("Item in cart:", item);
+          });
           // Prepare the items array
           const items = cartItems.map((item) => ({
-            id: item.id,
+            product: item._id,
             title: item.title,
             quantity: item.quantity,
             price: item.price,
@@ -94,6 +97,9 @@ const CheckoutForm = () => {
                 },
               }
             );
+            if (orderResponse.status !== 201) {
+              throw new Error("Order creation failed. Please contact support.");
+            }
 
             alert("Payment Successful!");
             clearCart(); // Clear the cart after the order is successfully placed

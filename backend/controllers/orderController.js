@@ -2,9 +2,11 @@ const Order = require("../models/Order");
 
 const orderController = {
   createOrder: async (req, res) => {
+    console.log("req.user", req.user);
+    console.log("Order creation payload:", req.body);
     try {
       const { items, totalAmount } = req.body;
-      const userId = req.user._id; // Extract user ID from the request
+      const userId = req.user.userId; // Extract user ID from the request
 
       // Ensure items are passed and valid
       if (!items || items.length === 0) {
@@ -15,7 +17,7 @@ const orderController = {
       const order = new Order({
         user: userId, // Set the user field
         products: items.map((item) => ({
-          product: item.id, // Ensure this corresponds to the correct field in your schema
+          product: item.product, // Ensure this corresponds to the correct field in your schema
           title: item.title,
           quantity: item.quantity,
           price: item.price,
