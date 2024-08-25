@@ -88,8 +88,10 @@ const Dashboard = () => {
                 key={appointment.id}
                 className="p-4 bg-gray-100 shadow-lg rounded-lg"
               >
-                <h3 className="text-lg font-bold mb-2">{appointment.title}</h3>
-                <p className="text-gray-600">{appointment.description}</p>
+                <h3 className="text-lg font-bold mb-2">
+                  {new Date(appointment.date).toLocaleDateString()}
+                </h3>
+                <p className="text-gray-600">{appointment.time}</p>
               </div>
             ))}
           </div>
@@ -110,7 +112,7 @@ const Dashboard = () => {
                 key={user.id}
                 className="p-4 bg-gray-100 shadow-lg rounded-lg"
               >
-                <h3 className="text-lg font-bold mb-2">{user.name}</h3>
+                <h3 className="text-lg font-bold mb-2">{user.username}</h3>
                 <p className="text-gray-600">{user.email}</p>
               </div>
             ))}
@@ -132,8 +134,12 @@ const Dashboard = () => {
                 key={order.id}
                 className="p-4 bg-gray-100 shadow-lg rounded-lg"
               >
-                <h3 className="text-lg font-bold mb-2">{order.product}</h3>
-                <p className="text-gray-600">Total: {order.total}</p>
+                <h3 className="text-lg font-bold mb-2">
+                  {order.user?.username}
+                </h3>
+                <p className="text-gray-600">
+                  Total: {order.totalAmount.toFixed(2)}
+                </p>
               </div>
             ))}
           </div>

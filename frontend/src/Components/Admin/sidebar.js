@@ -24,9 +24,12 @@ const Sidebar = ({ profileImage, username }) => {
   return (
     <div className="w-52 bg-gray-200 text-gray-800 flex flex-col items-center py-6 shadow-lg">
       {/* Brand Name */}
-      <div className="text-orange-500 text-2xl font-bold mb-4 font-sans-serif shadow-md p-2 rounded-lg">
-        AutoFixHub
-      </div>
+
+      <Link to="/admin/Dashboard">
+        <div className="text-orange-500 text-2xl font-bold mb-4 font-sans-serif shadow-md p-2 rounded-lg">
+          AutoFixHub
+        </div>
+      </Link>
 
       {/* Profile Section */}
       <Link
